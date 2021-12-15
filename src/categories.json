@@ -1,0 +1,100 @@
+[
+  {
+      "name": "Libre / Senior",
+      "gender" : "Male",
+      "maxAge": 100,
+      "minAge": 20,
+      "type":"Libre"
+    },
+    {
+      "name": "Libre / Senior F",
+      "gender" : "Female",
+      "maxAge" : 100,
+      "minAge" : 20,
+      "type" : "Libre"
+    },
+    {
+      "name": "Futsal / Senior",
+      "gender": "Male",
+      "minAge": 20,
+      "maxAge": 100,
+      "type" : "Futsal"
+    },
+    {
+      "name": "Futsal / U19 - U18",
+      "gender": "Male",
+      "minAge": 18,
+      "maxAge": 19,
+      "type" : "Futsal"
+    },
+    {
+      "name": "Football Loisir / Football Loisir",
+      "gender": "Male",
+      "minAge": 20,
+      "maxAge": 100,
+      "type" : "Loisir"
+    },
+    {
+      "name": "Libre / U19 - U18",
+      "gender" : "Male",
+      "minAge": 18,
+      "maxAge":19,
+      "type":"Libre"
+    },
+    {
+      "name": "Libre / U18 F - U17 F - U16 F",
+      "gender" : "Female",
+      "minAge": 16,
+      "maxAge": 18,
+      "type": "Libre"  },
+    {
+      "name": "Libre / U17 - U16",
+      "gender": "Male",
+      "minAge": 16,
+      "maxAge": 17,
+      "type": "Libre"
+     },
+    {
+      "name": "Libre / U15 - U14",
+      "gender": "Male",
+      "minAge": 14,
+      "maxAge":15,
+      "type": "Libre"
+    },
+    {
+      "name": "Libre / U15 F - U14 F",
+      "gender": "Female",
+      "minAge": 14,
+      "maxAge": 15,
+      "type": "Libre" 
+     },
+    {
+      "name": "Libre / U13 - U12",
+      "gender": "Male",
+      "minAge": 12,
+      "maxAge": 13,
+      "type":"Libre"
+    },
+    {
+      "name": "Libre / U13 F - U12 F",
+      "gender":"Female",
+      "minAge": 12,
+      "maxAge":13,
+      "type":"Libre"
+    },
+    {
+      "name": "Libre / Football d'animation F",
+      "gender": "Female",
+      "minAge":6,
+      "maxAge": 11,
+      "type": "Libre"
+    },
+    {
+      "name": "Libre / Football d'animation",
+      "gender": "Male",
+      "minAge": 6,
+      "maxAge": 11,
+      "type":"Libre"
+    }
+  
+]
