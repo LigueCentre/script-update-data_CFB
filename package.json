@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon src/server.js",
+    "start": "nodemon src/script.js",
     "test": "jest",
-    "script": "node src/server.js"
+    "script": "node src/script.js"
   },
   "keywords": [],
   "author": "",
