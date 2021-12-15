@@ -28,42 +28,54 @@ const createAllClub = new Promise((resolve, reject) => {
           cats.push(element["Libellé catégorie"]);
         }
 
+        // On vérifie si le club n'a pas déja été créer
         if (!clubsID.includes(element["Numéro de club"])) {
+          // On pousse le numéro du club dans un array
           clubsID.push(element["Numéro de club"]);
-
+          // on filtre toutes les équipes du club
           let teams = results.filter(
             (team) => team["Numéro de club"] === element["Numéro de club"]
           );
 
           let teamsNewFormat = [];
           let cat = [];
-          let minAge = 0;
-          let maxAge = 0;
+          let gender = [];
+          let minAge = 6;
+          let maxAge = 6;
 
           teams.forEach((team) => {
-            let newTeam = {
+            const indexCat = categories.findIndex(
+              (cat) => cat.name === team["Libellé catégorie"]
+            );
+
+            if (indexCat === -1) {
+              console.log("error: " + team["Libellé catégorie"]);
+            }
+
+            const newTeam = {
+              gender: categories[indexCat].gender,
               teamName: team["Nom équipe"],
               categorie: team["Libellé catégorie"],
             };
 
+            // on vérifie que la catégorie n'a pas déja été traité
             if (!cat.includes(team["Libellé catégorie"])) {
+              // on pousse la cat dans un array
               cat.push(team["Libellé catégorie"]);
 
-              let index = categories.findIndex(
-                (categorie) => team["Libellé catégorie"] === categorie.name
-              );
-              if (index === -1) {
-                console.log("error: " + team["Libellé catégorie"]);
-              } else {
-                minAge > categories[index].minAge
-                  ? (minAge = categories[index].minAge)
-                  : null;
-                maxAge < categories[index].maxAge
-                  ? (maxAge = categories[index].maxAge)
-                  : null;
+              // On vérifie que le sexe n'est pas déja présent et on l'inclu si necessaire
+              if (!gender.includes(categories[indexCat].gender)) {
+                gender.push(categories[indexCat].gender);
               }
-            }
 
+              // on ajuste l'age en fonction des catégorie
+              minAge > categories[indexCat].minAge
+                ? (minAge = categories[indexCat].minAge)
+                : null;
+              maxAge < categories[indexCat].maxAge
+                ? (maxAge = categories[indexCat].maxAge)
+                : null;
+            }
             teamsNewFormat.push(newTeam);
           });
 
@@ -77,12 +89,10 @@ const createAllClub = new Promise((resolve, reject) => {
             Latitude: element.Lat,
             Longitude: element.Long,
             categories: cat,
+            gender: gender,
             minAgeInClub: minAge,
             maxAgeInClub: maxAge,
           };
-
-          // !allCat.includes(element['Libellé catégorie']) ? allCat.push(element['Libellé catégorie']):null
-
           clubs.push(clubsToPush);
         }
       });
@@ -96,5 +106,5 @@ createAllClub.then((value) => {
   console.log(value.clubs[0]);
   let data = JSON.stringify(value.clubs);
   fs.writeFileSync("data.json", data);
-  // process.exit(1);
+  process.exit(1);
 });
