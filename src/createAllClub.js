@@ -2,20 +2,18 @@ const fs = require("fs");
 const { connection } = require("./db_connection");
 const categories = require("./categories.json");
 
+
+
 const createAllClub = new Promise((resolve, reject) => {
-  console.log("début");
+  console.log("Lancement du script");
   let clubs = [];
   let cats = [];
   const sql = "SELECT * FROM `TABLE 3` ";
   connection.query(sql, (err, results) => {
-    console.log(results[0]);
     if (err) {
       console.log(err);
       reject();
     } else {
-
-
-      
       let clubsID = [];
 
       results.forEach((element) => {
@@ -52,7 +50,7 @@ const createAllClub = new Promise((resolve, reject) => {
             );
 
             if (indexCat === -1) {
-              console.log("error: catégorie inconnu")
+              console.log("error: catégorie inconnu");
               console.log("error: " + team["Libellé catégorie"]);
             }
             const newTeam = {
@@ -81,10 +79,16 @@ const createAllClub = new Promise((resolve, reject) => {
             teamsNewFormat.push(newTeam);
           });
 
-          const Lat = element.Latitude.replace(",",'.')
-          const Long = element.Longitude.replace(",",'.')
-
-          console.log(Lat,Long)
+          let Lat;
+          let Long;
+          // on vérifie si une lattidue existe
+          if (element.Latitude.length > 0 && element.Longitude.length > 0) {
+            Lat = element.Latitude.replace(",", ".");
+            Long = element.Longitude.replace(",", ".");
+          } else {
+            Lat = "";
+            Long = "";
+          }
 
           let clubsToPush = {
             NumClub: element["Numéro de club"],
@@ -104,16 +108,62 @@ const createAllClub = new Promise((resolve, reject) => {
         }
       });
 
-      resolve({ clubs: clubs, cats: cats });
+      let clubinError = 0;
+      // on check si toutes les lat long sont la
+      clubs.forEach((club) => {
+        let error = false;
+        if (club.Latitude.length === 0) {
+          error = true;
+          // console.log("Latitude manquante sur le club " + club.NomClub);
+        }
+        if (club.Longitude.length === 0) {
+          error = true;
+          // console.log("Longitude manquante sur le club " + club.NomClub);
+        }
+        if (error) {
+          clubinError++;
+        }
+      });
+      console.log(clubinError + " clubs n'ont pas de coordonnées LAT LONG");
+
+      resolve({ clubs: clubs, cats: cats, clubInError:clubinError });
     }
   });
 });
 
-
-
-createAllClub.then((value) => {
-
+createAllClub.then(async (value) => {
   let data = JSON.stringify(value.clubs);
   fs.writeFileSync("data.json", data);
-  process.exit(1);
+
+  // Si un club est en erreur
+  if (value.clubInError > 0) {
+    console.log("Création du csv")
+    let newClubs = [];
+
+    // on stock tout les clubs et adress dans un fichier csv
+    await new Promise((resolve,reject)=>{
+      value.clubs.forEach(club=>{
+        const adress = club["AdressePostale"].replace(',','')
+        newClubs.push({numClub: club["NumClub"],AdressePostale:adress})
+      })
+      if(value.clubs.length === newClubs.length){
+        resolve()
+      }
+    }).then(()=>{
+      
+      // On convertie l'array en csv et on l'enregistre
+      function arrayToCSV (data) {
+        csv = data.map(row => Object.values(row));
+        csv.unshift(Object.keys(data[0]));
+        fs.writeFileSync("clubsAdress.csv",  csv.join('\n'));
+        console.log("Csv créee")
+      }
+      arrayToCSV(newClubs)
+    })
+    console.log("Script terminé")
+    process.exit(1);
+
+  
+    
+  }
 });

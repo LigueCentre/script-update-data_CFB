@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon src/script.js",
     "test": "jest",
-    "script": "node src/script.js"
+    "createclub": "node src/createAllClub.js",
+    "addlatlong": "node src/fixlatlong.js"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +15,10 @@
   "dependencies": {
     "axios": "^0.24.0",
     "cors": "^2.8.5",
+    "csvtojson": "^2.0.10",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "json-csv": "^4.0.2",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
