@@ -1,21 +1,27 @@
 const fs = require("fs");
-const { connection } = require("./db_connection");
-const categories = require("./categories.json");
+const categories = require("./data/categories.json");
+const csv = require("csvtojson");
+const csvFilePath = `${__dirname}/../csvimport/import.csv`;
 
+const createAllClub = new Promise(
+  async (resolve, reject) => {
+    console.log("Lancement du script");
+    let clubs = [];
+    let cats = [];
 
+    let results;
 
-const createAllClub = new Promise((resolve, reject) => {
-  console.log("Lancement du script");
-  let clubs = [];
-  let cats = [];
-  const sql = "SELECT * FROM `TABLE 3` ";
-  connection.query(sql, (err, results) => {
-    if (err) {
-      console.log(err);
-      reject();
-    } else {
-      let clubsID = [];
+    await csv()
+      .fromFile(csvFilePath)
+      .then((jsonObj) => {
+        results = jsonObj;
+      })
+      .catch(() => {
+        reject("Fichier d'import introuvabe");
+      });
 
+    let clubsID = [];
+    if (results.length > 0) {
       results.forEach((element) => {
         // Modification des catégorie
         results.forEach((element) => {
@@ -125,45 +131,64 @@ const createAllClub = new Promise((resolve, reject) => {
         }
       });
       console.log(clubinError + " clubs n'ont pas de coordonnées LAT LONG");
-
-      resolve({ clubs: clubs, cats: cats, clubInError:clubinError });
+      resolve({ clubs: clubs, cats: cats, clubInError: clubinError });
     }
-  });
-});
-
-createAllClub.then(async (value) => {
-  let data = JSON.stringify(value.clubs);
-  fs.writeFileSync("data.json", data);
-
-  // Si un club est en erreur
-  if (value.clubInError > 0) {
-    console.log("Création du csv")
-    let newClubs = [];
-
-    // on stock tout les clubs et adress dans un fichier csv
-    await new Promise((resolve,reject)=>{
-      value.clubs.forEach(club=>{
-        const adress = club["AdressePostale"].replace(',','')
-        newClubs.push({numClub: club["NumClub"],AdressePostale:adress})
-      })
-      if(value.clubs.length === newClubs.length){
-        resolve()
-      }
-    }).then(()=>{
-      
-      // On convertie l'array en csv et on l'enregistre
-      function arrayToCSV (data) {
-        csv = data.map(row => Object.values(row));
-        csv.unshift(Object.keys(data[0]));
-        fs.writeFileSync("clubsAdress.csv",  csv.join('\n'));
-        console.log("Csv créee")
-      }
-      arrayToCSV(newClubs)
-    })
-    console.log("Script terminé")
-    process.exit(1);
-
-  
-    
   }
-});
+);
+
+
+createAllClub
+  .then(async (value) => {
+    let data = JSON.stringify(value.clubs);
+
+    // Si un club est en erreur
+    if (value.clubInError > 0) {
+      console.log("Création du csv");
+      let newClubs = [];
+
+      // on stock tout les clubs et adress dans un fichier csv
+      await new Promise((resolve, reject) => {
+        value.clubs.forEach((club) => {
+          const adress = club["AdressePostale"].replace(",", "");
+          newClubs.push({ numClub: club["NumClub"], AdressePostale: adress });
+        });
+        if (value.clubs.length === newClubs.length) {
+          resolve();
+        }
+      }).then(() => {
+        // On convertie l'array en csv et on l'enregistre
+        function arrayToCSV(data) {
+          csvToError = data.map((row) => Object.values(row));
+          csvToError.unshift(Object.keys(data[0]));
+          fs.writeFileSync(
+            "./csvtoaddlatlong/clubsAdress.csv",
+            csvToError.join("\n")
+          );
+          console.log("Csv créee");
+        }
+        arrayToCSV(newClubs);
+
+        // Suppression du fichier d'import
+        fs.unlink("./csvimport/import.csv", function (err) {
+          if (err && err.code == "ENOENT") {
+            console.info("Le fichier n'existe pas");
+          } else if (err) {
+            console.error("Other error");
+          } else {
+            console.info(`Fichier supprimé`);
+          }
+        });
+      });
+      console.log("Sauvegarde du fichier de data");
+      fs.writeFileSync("./src/data/dataSave.json", data);
+    } else {
+      fs.writeFileSync("./jsonexported/data.json", data);
+    }
+
+    process.exit(1);
+  })
+  .catch((res) => {
+    console.log(res);
+    console.log("Script terminé");
+    process.exit(1);
+  });
