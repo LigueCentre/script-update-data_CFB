@@ -1,21 +1,24 @@
 const fs = require("fs");
 const { connection } = require("./db_connection");
 const categories = require("./categories.json");
-const { default: axios } = require("axios");
 
 const createAllClub = new Promise((resolve, reject) => {
   console.log("début");
   let clubs = [];
   let cats = [];
-  const sql = "SELECT * FROM `TABLE 2` ";
+  const sql = "SELECT * FROM `TABLE 3` ";
   connection.query(sql, (err, results) => {
     console.log(results[0]);
     if (err) {
       console.log(err);
       reject();
     } else {
+
+
+      
       let clubsID = [];
-      results.slice(3000, 3100).forEach((element) => {
+
+      results.forEach((element) => {
         // Modification des catégorie
         results.forEach((element) => {
           if (element["Libellé catégorie"] === "Foot Loisir / Foot Loisir") {
@@ -49,9 +52,9 @@ const createAllClub = new Promise((resolve, reject) => {
             );
 
             if (indexCat === -1) {
+              console.log("error: catégorie inconnu")
               console.log("error: " + team["Libellé catégorie"]);
             }
-
             const newTeam = {
               gender: categories[indexCat].gender,
               teamName: team["Nom équipe"],
@@ -67,7 +70,6 @@ const createAllClub = new Promise((resolve, reject) => {
               if (!gender.includes(categories[indexCat].gender)) {
                 gender.push(categories[indexCat].gender);
               }
-
               // on ajuste l'age en fonction des catégorie
               minAge > categories[indexCat].minAge
                 ? (minAge = categories[indexCat].minAge)
@@ -79,22 +81,38 @@ const createAllClub = new Promise((resolve, reject) => {
             teamsNewFormat.push(newTeam);
           });
 
-          // on modifie la , dans le nombre pour le traduire en float
-          console.log(element.Lat);
-          const Lat = element.Lat.replace(",", ".");
-          const Long = element.Long.replace(",", ".");
-          console.log(element.Lat.length);
+          const Lat = element.Latitude.replace(",",'.')
+          const Long = element.Longitude.replace(",",'.')
+
+          console.log(Lat,Long)
+
+          let clubsToPush = {
+            NumClub: element["Numéro de club"],
+            AdressePostale: element["AdressePostale"],
+            Mail: element["MailClub"],
+            Localite: element["Bureau distributeur"],
+            equipes: teamsNewFormat,
+            NomClub: element["Nom de club"],
+            Latitude: Lat,
+            Longitude: Long,
+            categories: cat,
+            gender: gender,
+            minAgeInClub: minAge,
+            maxAgeInClub: maxAge,
+          };
+          clubs.push(clubsToPush);
         }
       });
 
-      resolve({ clubs: clubs, cats: cats, result: results[0] });
+      resolve({ clubs: clubs, cats: cats });
     }
   });
 });
 
+
+
 createAllClub.then((value) => {
-  // console.log(value.result);
-  // console.log(value.clubs[0]);
+
   let data = JSON.stringify(value.clubs);
   fs.writeFileSync("data.json", data);
   process.exit(1);
