@@ -17,7 +17,7 @@ const createAllClub = new Promise(
         results = jsonObj;
       })
       .catch(() => {
-        reject("Fichier d'import introuvabe");
+        reject("Fichier d'import introuvable");
       });
 
     let clubsID = [];
@@ -180,15 +180,16 @@ createAllClub
         });
       });
       console.log("Sauvegarde du fichier de data");
+      console.log("Warning: Veuillez ajouter les lattitudes et longitudes sur le fichier clubsAdress.csv (/csvtoaddlatlong/clubsAdress.csv) et éxecuter la commande npm run addlatlong")
       fs.writeFileSync("./src/data/dataSave.json", data);
     } else {
       fs.writeFileSync("./jsonexported/data.json", data);
     }
-
+    console.log("Le script s'est éxécuté avec succés")
     process.exit(1);
   })
   .catch((res) => {
     console.log(res);
-    console.log("Script terminé");
+    console.log("Script terminés avec une erreur");
     process.exit(1);
   });
