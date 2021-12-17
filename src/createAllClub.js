@@ -250,8 +250,6 @@ createAllClub
       }
     }
     await processArray(data);
-
-    // console.log("Le script s'est éxécuté avec succés");
     process.exit(1);
   })
   .catch((res) => {
