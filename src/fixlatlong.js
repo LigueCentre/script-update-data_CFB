@@ -31,25 +31,28 @@ const add = new Promise(async (resolve, reject) => {
       }
     });
 
-    fs.readFile(`${__dirname}/data/dataSave.json`, async function (err, data) {
-      if (err) {
-        console.log(err);
-      }
-      let newData = JSON.parse(data);
-
-      await newData.forEach((element) => {
-        let clubWithLatLongFiltered = clubWithLatLong.filter(
-          (res) => res.numClub === element.NumClub.toString()
-        );
-        if (clubWithLatLongFiltered.length > 0) {
-          element.Latitude = clubWithLatLongFiltered[0].Latitude;
-          element.Longitude = clubWithLatLongFiltered[0].Longitude;
-        } else {
-          reject("Club inconnu");
+    fs.readFile(
+      `${__dirname}/../jsonexported/data.json`,
+      async function (err, data) {
+        if (err) {
+          console.log(err);
         }
-      });
-      resolve(newData);
-    });
+        let newData = JSON.parse(data);
+
+        await newData.forEach((element) => {
+          let clubWithLatLongFiltered = clubWithLatLong.filter(
+            (res) => res.numClub === element.NumClub.toString()
+          );
+          if (clubWithLatLongFiltered.length > 0) {
+            element.Latitude = clubWithLatLongFiltered[0].Latitude;
+            element.Longitude = clubWithLatLongFiltered[0].Longitude;
+          } else {
+            reject("Club inconnu");
+          }
+        });
+        resolve(newData);
+      }
+    );
   } else {
     reject("Fichier Introuvable");
   }
@@ -58,44 +61,28 @@ const add = new Promise(async (resolve, reject) => {
 add
   .then(async (res) => {
     console.log("sauvegarde du fichier");
-    fs.writeFileSync("./jsonexported/data.json", JSON.stringify(res));
+    fs.writeFileSync(
+      `${__dirname}/../jsonexported/data.json`,
+      JSON.stringify(res)
+    );
     console.log("suppression du fichier de sauvegarde");
 
     new Promise((resolve, reject) => {
-      fs.unlink("./src/data/dataSave.json", function (err) {
+      // Suppression du fichier csv
+      fs.unlink("./csvtoaddlatlong/clubsAdress.csv", function (err) {
         if (err && err.code == "ENOENT") {
-          reject("Le fichier n'existe pas dataSave.csv");
+          reject("Le fichier n'existe pas clubsAdress.csv");
         } else if (err) {
           reject("Other error");
         } else {
-          resolve("Fichier dataSave supprimé");
+          resolve("Fichier clubsAdress supprimé");
         }
       });
     })
       .then((res) => {
         console.log(res);
-        new Promise((resolve, reject) => {
-          // Suppression du fichier csv
-          fs.unlink("./csvtoaddlatlong/clubsAdress.csv", function (err) {
-            if (err && err.code == "ENOENT") {
-              reject("Le fichier n'existe pas clubsAdress.csv");
-            } else if (err) {
-              reject("Other error");
-            } else {
-              resolve("Fichier dataSave supprimé");
-            }
-          });
-        })
-          .then((res) => {
-            console.log(res);
-            console.log("Le script s'est éxécuté avec succés");
-            process.exit(1);
-          })
-          .catch((err) => {
-            console.log(err);
-            console.log("Script terminés avec une erreur");
-            process.exit(1);
-          });
+        console.log("Le script s'est éxécuté avec succés");
+        process.exit(1);
       })
       .catch((err) => {
         console.log(err);
@@ -103,8 +90,8 @@ add
         process.exit(1);
       });
   })
-  .catch((res) => {
-    console.log(res);
+  .catch((err) => {
+    console.log(err);
     console.log("Script terminés avec une erreur");
     process.exit(1);
   });

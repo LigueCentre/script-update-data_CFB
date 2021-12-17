@@ -101,7 +101,7 @@ const createAllClub = new Promise(async (resolve, reject) => {
           NumClub: element["Numéro de club"],
           AdressePostale: element["AdressePostale"],
           Mail: element["MailClub"],
-          Localite: element["Bureau distributeur"],
+          Localite: element["Localité club"],
           equipes: teamsNewFormat,
           NomClub: element["Nom de club"],
           Latitude: Lat,
@@ -110,6 +110,7 @@ const createAllClub = new Promise(async (resolve, reject) => {
           gender: gender,
           minAgeInClub: minAge,
           maxAgeInClub: maxAge,
+          label:[]
         };
         clubs.push(clubsToPush);
       }

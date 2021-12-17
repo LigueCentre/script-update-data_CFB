@@ -7,7 +7,8 @@
     "start": "nodemon src/script.js",
     "test": "jest",
     "createclub": "node src/createAllClub.js",
-    "addlatlong": "node src/fixlatlong.js"
+    "addlatlong": "node src/fixlatlong.js",
+    "addlabel": "node src/addLabel.js"
   },
   "keywords": [],
   "author": "",
