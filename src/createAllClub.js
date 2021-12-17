@@ -164,9 +164,9 @@ createAllClub
             );
             if (res.data.features.length > 0) {
               console.log("Résultat trouvé");
-              data[index].Latitude =
-                res.data.features[0].geometry.coordinates[0];
               data[index].Longitude =
+                res.data.features[0].geometry.coordinates[0];
+              data[index].Latitude =
                 res.data.features[0].geometry.coordinates[1];
               resolve();
             } else {
@@ -179,9 +179,9 @@ createAllClub
     }
 
     async function processArray(array) {
-      for (const item of array) {
+     for (const item of array) {
         const object = {
-          i: array.findIndex((res) => res.NumClub === item.NumClub),
+           i: array.findIndex((res) => res.NumClub === item.NumClub),
           codepost: item.codePostal,
           numclub: item.NumClub,
           adress: item.AdressePostale,
@@ -194,6 +194,7 @@ createAllClub
       let result = JSON.stringify(data);
       if (clubWhenNotcoordinates.length > 0) {
         let newClubs = []
+
         // on stock tout les clubs et adress dans un fichier csv
         await new Promise((resolve, reject) => {
           value.clubs.forEach((club) => {
@@ -219,18 +220,19 @@ createAllClub
             );
             console.log("Csv créee");
           }
+
           arrayToCSV(newClubs);
 
           // Suppression du fichier d'import
-          // fs.unlink("./csvimport/import.csv", function (err) {
-          //   if (err && err.code == "ENOENT") {
-          //     console.info("Le fichier n'existe pas");
-          //   } else if (err) {
-          //     console.error("Other error");
-          //   } else {
-          //     console.info(`Fichier supprimé`);
-          //   }
-          // });
+          fs.unlink("./csvimport/import.csv", function (err) {
+            if (err && err.code == "ENOENT") {
+              console.info("Le fichier n'existe pas");
+            } else if (err) {
+              console.error("Other error");
+            } else {
+              console.info(`Fichier supprimé`);
+            }
+          });
 
           console.log(
             "\x1b[33m",
