@@ -13,11 +13,8 @@ Execution de la commande:
 ## Pour ajouter les latitudes et longitudes via un fichier csv externet
 
 ⚠️Ré-integrer le fichier csv de la liste des clubs et coordonnées (clubAdres.csv) modifié par vos soins dans le dossier "/csvtoaddlatlong" et
-bien vérifier que le fichier de data.json généré avec la commande précédante :
+bien vérifier que le fichier de data.json généré avec la commande précédante.
 
-```sh
-  npm run addlatlong
-```
 
 Execution de la commande:
 
