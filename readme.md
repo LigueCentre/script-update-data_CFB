@@ -82,7 +82,7 @@ Execution de la commande:
 - npm
 
 ```sh
- npm run createclub
+ npm run addlabel
 ```
 
 Exemple de model de csv:
