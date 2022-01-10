@@ -16,7 +16,7 @@ Execution de la commande:
 bien vérifier que le fichier de data.json généré avec la commande précédante :
 
 ```sh
-  npm run createclub
+  npm run addlatlong
 ```
 
 Execution de la commande:
@@ -24,7 +24,7 @@ Execution de la commande:
 - npm
 
 ```sh
- npm run createclub
+ npm run addlatlong
 ```
 
 
